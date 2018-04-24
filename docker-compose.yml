@@ -1,0 +1,39 @@
+version: '2'
+ 
+services:
+    nginx:
+        image: nginx:1.12.2-alpine
+        ports:
+            - '8082:80'
+        volumes:
+            - ./nginx:/etc/nginx/conf.d
+            - ./logs/nginx:/var/log/nginx
+            - ./wordpress:/var/www/html
+        links:
+            - wordpress
+        restart: always
+    mysql:
+        image: mariadb 
+#        ports:
+#            - '3306:3306'
+        volumes:
+            - ./db-data:/var/lib/mysql 
+        environment:
+            - MYSQL_ROOT_PASSWORD=aEfe31DFE2!
+        restart: always
+    wordpress:
+        image: wordpress:4.9.4-php7.2-fpm-alpine
+#        ports:
+#            - '9000:9000'
+        volumes:
+            - ./wordpress:/var/www/html
+        environment:
+            - WORDPRESS_DB_NAME=wpdb
+            - WORDPRESS_TABLE_PREFIX=wp_
+            - WORDPRESS_DB_HOST=mysql
+            - WORDPRESS_DB_PASSWORD=aEfe31DFE2!
+        links:
+            - mysql
+        depends_on:
+            - mysql
+        restart: always
